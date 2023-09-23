@@ -1,68 +1,59 @@
 Start Queue Manager:
-
 strmqm <QueueManagerName>
 Use: Initiates the specified Queue Manager.
-Stop Queue Manager:
 
+Stop Queue Manager:
 endmqm <QueueManagerName>
 Use: Halts the specified Queue Manager.
-Display MQ Version Information:
 
+Display MQ Version Information:
 dspmqver
 Use: Shows the version of IBM MQ currently installed.
-List Queue Managers on a System:
 
+List Queue Managers on a System:
 dspmq
 Use: Lists all available Queue Managers on the system.
-Create a New Queue Manager:
 
+Create a New Queue Manager:
 crtmqm <QueueManagerName>
 Use: Creates a new Queue Manager with the specified name.
-Delete a Queue Manager:
 
+Delete a Queue Manager:
 dltmqm <QueueManagerName>
 Use: Deletes an existing Queue Manager.
-Start a Queue Manager as a Service:
 
+Start a Queue Manager as a Service:
 strmqcsv <QueueManagerName>
 Use: Starts a Queue Manager as a service (Windows platform).
-Stop a Queue Manager Service:
 
+Stop a Queue Manager Service:
 endmqcsv <QueueManagerName>
 Use: Stops a Queue Manager service (Windows platform).
+
 Display Information About All Queues:
-
-mqsc -c "DISPLAY Q(*)"
+echo "DISPLAY Q(*)" | ./runmqsc MQWEB_QMGR
 Use: Displays information about all queues in the Queue Manager.
-Run MQSC Script:
 
+Run MQSC Script:
 runmqsc <QueueManagerName> < script.mqsc
 Use: Executes an MQSC script against a specific Queue Manager.
+
 Display Queue Manager Status:
-
-qmstatus -n <QueueManagerName>
+echo "DISPLAY QMSTATUS" | ./runmqsc MQWEB_QMGR
 Use: Shows the status of a specific Queue Manager.
-Display Cluster Status:
 
-clusstat
-Use: Displays the status of clusters in the Queue Manager.
+Display Queue Status:
+echo "DISPLAY QSTATUS(*)" | ./runmqsc MQWEB_QMGR
+Use: Displays the status of the QUEUES in the Queue Manager.
+
 List Channels:
-
-dspmq -n -o all
+echo "DISPLAY CHANNEL(*)" | ./runmqsc MQWEB_QMGR
 Use: Lists all channels defined in the Queue Manager.
+
 Display Listener Status:
-
-disql <QueueManagerName>
+echo "DISPLAY LSSTATUS(*)" | ./runmqsc MQWEB_QMGR
 Use: Shows the status of listeners on the Queue Manager.
-Start Listener:
 
-strmqm <QueueManagerName> -x <ListenerName>
-Use: Starts a listener on the Queue Manager.
-Stop Listener:
-
-endmqm <QueueManagerName> -x <ListenerName>
-Use: Stops a listener on the Queue Manager.
 Refresh Queue Manager:
-
-refmqm <QueueManagerName>
+echo "refresh qmgr type(CONFIGEV) name(REPO_NL) object(NAMELIST)" | ./runmqsc MQWEB_QMGR
 Use: Refreshes the configuration of a running Queue Manager.
