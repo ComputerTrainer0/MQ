@@ -1,0 +1,96 @@
+/opt/mqm/bin/crtmqm -p 9001 -u SYSTEM.DEAD.LETTER.QUEUE QMC1
+/opt/mqm/bin/crtmqm -p 9002 -u SYSTEM.DEAD.LETTER.QUEUE QMC2
+/opt/mqm/bin/crtmqm -p 9003 -u SYSTEM.DEAD.LETTER.QUEUE QMC3
+/opt/mqm/bin/crtmqm -p 9004 -u SYSTEM.DEAD.LETTER.QUEUE QMC4
+
+/opt/mqm/bin/strmqm QMC1
+/opt/mqm/bin/strmqm QMC2
+/opt/mqm/bin/strmqm QMC3
+/opt/mqm/bin/strmqm QMC4
+
+==================
+
+ /opt/mqm/bin/runmqsc QMC1
+
+DEFINE CHANNEL(CLUS1.QMC1) CHLTYPE(CLUSRCVR) TRPTYPE(TCP) +
+CONNAME('multi-tenent(9001)') CLUSTER(CLUS1) +
+DESCR('Cluster-receiver channel for QM1 on cluster CLUS1')
+
+DEFINE CHANNEL(CLUS1.QMC2) CHLTYPE(CLUSSDR) TRPTYPE(TCP) +
+CONNAME('multi-tenent(9002)') CLUSTER(CLUS1) +
+DESCR('Cluster-sender channel from QM1 +
+to repository at QM2 on CLUS1')
+
+ALTER QMGR REPOS(CLUS1)
+
+ /opt/mqm/bin/runmqsc QMC2
+
+DEFINE CHANNEL(CLUS1.QMC2) CHLTYPE(CLUSRCVR) TRPTYPE(TCP) +
+CONNAME('multi-tenent(9002)') CLUSTER(CLUS1) +
+DESCR('Cluster-receiver channel for QMC1 on cluster CLUS1')
+
+DEFINE CHANNEL(CLUS1.QMC1) CHLTYPE(CLUSSDR) TRPTYPE(TCP) +
+CONNAME('multi-tenent(9001)') CLUSTER(CLUS1) +
+DESCR('Cluster-sender channel from QM1 +
+to repository at QMC2 on CLUS1')
+
+ALTER QMGR REPOS(CLUS1)
+
+
+==================
+ /opt/mqm/bin/runmqsc QMC3
+
+DEFINE CHANNEL(CLUS1.QMC3) CHLTYPE(CLUSRCVR) TRPTYPE(TCP) +
+CONNAME('multi-tenent(9003)') CLUSTER(CLUS1)
+DEFINE CHANNEL(CLUS1.QMC1) CHLTYPE(CLUSSDR) TRPTYPE(TCP) +
+CONNAME('multi-tenent(9001)') CLUSTER(CLUS1)
+
+
+==================
+
+
+ /opt/mqm/bin/runmqsc QMC4
+
+DEFINE CHANNEL(CLUS1.QMC4) CHLTYPE(CLUSRCVR) TRPTYPE(TCP) +
+CONNAME('multi-tenent(9004)') CLUSTER(CLUS1)
+DEFINE CHANNEL(CLUS1.QMC1) CHLTYPE(CLUSSDR) TRPTYPE(TCP) +
+CONNAME('multi-tenent(9001)') CLUSTER(CLUS1)
+
+==================
+
+data.txt
+
+01 Messages to generate queue data to use with amqsput
+02 Messages to generate queue data to use with amqsput
+03 Messages to generate queue data to use with amqsput
+04 Messages to generate queue data to use with amqsput
+05 Messages to generate queue data to use with amqsput
+06 Messages to generate queue data to use with amqsput
+07 Messages to generate queue data to use with amqsput
+08 Messages to generate queue data to use with amqsput
+09 Messages to generate queue data to use with amqsput
+10 Messages to generate queue data to use with amqsput
+11 Messages to generate queue data to use with amqsput
+12 Messages to generate queue data to use with amqsput
+13 Messages to generate queue data to use with amqsput
+14 Messages to generate queue data to use with amqsput
+15 Messages to generate queue data to use with amqsput
+
+==================
+
+/opt/mqm/samp/bin/amqsput CLUSQ1 QMC1 < /tmp/data.txt
+
+echo "dis QL(CLUSQ1) CURDEPTH" | /opt/mqm/bin/runmqsc QMC1 ; echo "dis QL(CLUSQ1) CURDEPTH" | /opt/mqm/bin/runmqsc QMC2; echo "dis QL(CLUSQ1) CURDEPTH" | /opt/mqm/bin/runmqsc QMC3
+
+==================
+
+
+/opt/mqm/bin/endmqm QMC1
+/opt/mqm/bin/endmqm QMC2
+/opt/mqm/bin/endmqm QMC3
+/opt/mqm/bin/endmqm QMC4
+
+/opt/mqm/bin/dltmqm QMC1
+/opt/mqm/bin/dltmqm QMC2
+/opt/mqm/bin/dltmqm QMC3
+/opt/mqm/bin/dltmqm QMC4
