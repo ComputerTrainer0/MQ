@@ -1,0 +1,55 @@
+
+/opt/mqm/bin/crtmqm -ll -p 1417 -u SYSTEM.DEAD.LETTER.QUEUE QML01
+/opt/mqm/bin/strmqm QML01
+
+vi /tmp/recovers.mqsc
+
+DEF QL(QL.A) DEFPSIST(YES) REPLACE
+DEF QL(QL.B) DEFPSIST(YES) REPLACE
+DEF QA(QA.A) TARGET(QL.A) DEFPSIST(NO) REPLACE
+DEF QA(QA.B) TARGET(QL.B) DEFPSIST(NO) REPLACE
+
+
+/opt/mqm/bin/runmqsc QML01 < /tmp/recovers.mqsc > /tmp/recoveryreport.txt
+
+
+/opt/mqm/samp/bin/amqsput QL.A QML01
+QL.A Message 1
+QL.A Message 2
+QL.A Message 3
+
+/opt/mqm/samp/bin/amqsput QA.A QML01
+QA.A Message 1
+QA.A Message 2
+QA.A Message 3
+
+/opt/mqm/samp/bin/amqsput QL.B QML01
+QL.B Message 1
+QL.B Message 2
+QL.B Message 3
+QL.B Message 4
+QL.B Message 5
+QL.B Message 6
+QL.B Message 7
+QL.B Message 8
+QL.B Message 9
+QL.B Message 10
+
+
+/opt/mqm/samp/bin/amqsput QA.B QML01
+QA.B Message 1
+QA.B Message 2
+QA.B Message 3
+
+Browser messages
+
+/opt/mqm/bin/endmqm QML01
+
+
+/opt/mqm/bin/rcdmqimg -m QML01 -t ql QL.B
+
+/opt/mqm/bin/runmqsc QML01
+DIS Q(QL.B)
+
+
+ /opt/mqm/bin/rcrmqobj -m QML01 -t ql QL.B
