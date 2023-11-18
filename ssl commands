@@ -1,0 +1,31 @@
+/opt/mqm/bin/crtmqm -p 9011 -u SECQM1.DLQ SECQM1
+/opt/mqm/bin/crtmqm -p 9012 -u SECQM2.DLQ SECQM2
+
+/opt/mqm/bin/strmqm SECQM1
+/opt/mqm/bin/strmqm SECQM2
+
+/opt/mqm/bin/runmqsc SECQM1
+/opt/mqm/bin/runmqsc SECQM2
+
+sudo yum -y install java-11-openjdk-devel
+/opt/mqm/samp/bin/amqsput QRMT SECQM1
+
+mkdir /opt/mqm/ssl
+
+/opt/mqm/java/jre64/jre/bin/ikeyman
+
+
+/opt/mqm/java/jre64/jre/bin/ikeycmd -keydb -create -db /opt/mqm/ssl/SECQM2.kdb -type CMS -pw password -expire 1000 -stash
+cd /opt/mqm/ssl/
+/opt/mqm/java/jre64/jre/bin/ikeycmd -cert -create -db SECQM2.kdb -pw password -label SECQM2 -dn "cn=SECQM2,o=IBM,ou=MQ" -size 2048 -sig_alg SHA256WithRSA -expire 1000
+/opt/mqm/java/jre64/jre/bin/ikeycmd -cert -list -db SECQM2.kdb -stashed
+/opt/mqm/java/jre64/jre/bin/ikeycmd -cert -details -label SECQM2 -db SECQM2.kdb -stashed
+/opt/mqm/java/jre64/jre/bin/ikeycmd -cert -extract -db SECQM2.kdb -label SECQM2 -target SECQM2.der -format binary -stashed
+/opt/mqm/java/jre64/jre/bin/ikeycmd -cert -add -db SECQM2.kdb -type CMS -format ASCII -label SECQM1 -trust enable -file cert.arm -stashed
+/opt/mqm/java/jre64/jre/bin/ikeycmd -cert -list -db SECQM2.kdb -stashed
+/opt/mqm/java/jre64/jre/bin/ikeycmd -cert -details -label SECQM1 -db SECQM2.kdb -stashed
+
+
+
+
+java -cp /opt/software/MQ/sps.jar SimpleProxyServer localhost 9012 19002
