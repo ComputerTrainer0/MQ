@@ -25,7 +25,8 @@ cd /opt/mqm/ssl/
 /opt/mqm/java/jre64/jre/bin/ikeycmd -cert -list -db SECQM2.kdb -stashed
 /opt/mqm/java/jre64/jre/bin/ikeycmd -cert -details -label SECQM1 -db SECQM2.kdb -stashed
 
-
-
+TLS_RSA_WITH_AES_128_CBC_SHA256
 
 java -cp /opt/software/MQ/sps.jar SimpleProxyServer localhost 9012 19002
+
+
